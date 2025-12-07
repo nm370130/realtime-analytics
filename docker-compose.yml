@@ -1,0 +1,75 @@
+version: "3.9"
+
+services:
+
+  # ------------------------
+  #  MySQL Database
+  # ------------------------
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_realtime
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: realtime_analytics
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./deploy/sql/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./deploy/sql/seed.sql:/docker-entrypoint-initdb.d/2_seed.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ------------------------
+  #  Redis Server
+  # ------------------------
+  redis:
+    image: redis:7
+    container_name: redis_realtime
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  # ------------------------
+  #  Go Backend Service
+  # ------------------------
+  analytics:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: realtime_analytics_app
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      MYSQL_DSN: "appuser:apppass@tcp(mysql:3306)/realtime_analytics?parseTime=true&charset=utf8mb4&loc=Local"
+      REDIS_ADDR: "redis:6379"
+      GIN_MODE: "release"      
+    ports:
+      - "8080:8080"
+    command: ["/app/realtime-analytics"]  
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  mysql_data:
+  redis_data:

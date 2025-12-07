@@ -1,0 +1,150 @@
+{
+  "info": {
+    "name": "Real-Time Analytics Platform",
+    "_postman_id": "9e4c63bc-4ac7-49d1-b4a3-f00127af5ee1",
+    "description": "Postman collection for Real-Time Analytics Backend (Golang + MySQL + Redis)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      },
+      "response": [
+        {
+          "name": "OK",
+          "status": "OK",
+          "code": 200,
+          "body": "{ \"status\": \"ok\" }",
+          "header": []
+        }
+      ]
+    },
+    {
+      "name": "Metrics Summary",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/metrics/summary",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "metrics", "summary"]
+        }
+      },
+      "response": [
+        {
+          "name": "Example Success",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"activeUsers\": 52,\n  \"activeUsersByPlatform\": {\n    \"web\": 30,\n    \"mobile-app1\": 12,\n    \"mobile-app2\": 10\n  },\n  \"APIRejectedCount\": 4,\n  \"newProjectsLast7Days\": 3,\n  \"totalLiveProjects\": 2,\n  \"sensorsOnline\": 8,\n  \"sensorsOffline\": 4\n}",
+          "header": []
+        }
+      ]
+    },
+    {
+      "name": "Metrics History (activeUsers)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/metrics/history?metric=activeUsers&interval=5m",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "metrics", "history"],
+          "query": [
+            { "key": "metric", "value": "activeUsers" },
+            { "key": "interval", "value": "5m" }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "Example History",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"metricType\": \"activeUsers\",\n  \"interval\": \"5m\",\n  \"points\": [\n    { \"timestamp\": \"2025-01-05T15:20:00Z\", \"value\": 30 },\n    { \"timestamp\": \"2025-01-05T15:21:00Z\", \"value\": 32 },\n    { \"timestamp\": \"2025-01-05T15:22:00Z\", \"value\": 35 }\n  ]\n}",
+          "header": []
+        }
+      ]
+    },
+    {
+      "name": "Metrics History (apiRejectedCount)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/metrics/history?metric=apiRejectedCount&interval=5m",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "metrics", "history"],
+          "query": [
+            { "key": "metric", "value": "apiRejectedCount" },
+            { "key": "interval", "value": "5m" }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "Example History",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"metricType\": \"apiRejectedCount\",\n  \"interval\": \"5m\",\n  \"points\": [\n    { \"timestamp\": \"2025-01-05T15:23:00Z\", \"value\": 2 },\n    { \"timestamp\": \"2025-01-05T15:24:00Z\", \"value\": 4 },\n    { \"timestamp\": \"2025-01-05T15:25:00Z\", \"value\": 3 }\n  ]\n}",
+          "header": []
+        }
+      ]
+    },
+    {
+      "name": "Sensor Type Breakdown",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/sensors/type-breakdown",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "sensors", "type-breakdown"]
+        }
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"temperature\": 10,\n  \"humidity\": 5,\n  \"motion\": 2,\n  \"airQuality\": 0\n}",
+          "header": []
+        }
+      ]
+    },
+    {
+      "name": "Modules List",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/modules",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "modules"]
+        }
+      },
+      "response": [
+        {
+          "name": "Example",
+          "status": "OK",
+          "code": 200,
+          "body": "[\n  {\n    \"moduleName\": \"auth-service\",\n    \"currentVersion\": \"1.4.2\",\n    \"lastDeployedAt\": \"2024-12-20T10:00:00Z\",\n    \"upcomingVersion\": \"1.5.0\",\n    \"upcomingReleaseDate\": \"2025-01-10\"\n  }\n]",
+          "header": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}

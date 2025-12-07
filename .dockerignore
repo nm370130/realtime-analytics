@@ -1,0 +1,9 @@
+/bin
+/tmp
+/vendor
+/go/pkg
+*.log
+*.out
+.env
+.DS_Store
+.idea
