@@ -31,7 +31,7 @@ Includes Redis caching.
 GET /api/v1/modules
 Returns module name, current version, upcoming version, and release info.
 
-Additional Features
+# Additional Features
 Redis caching layer
 Global rate-limiting middleware (100 req/min per IP)
 Request-ID middleware
@@ -39,8 +39,8 @@ Structured logging via Zap
 Config system using Viper
 Graceful shutdown
 
-Clean folder structure
-Project Structure
+# Clean folder structure
+- Project Structure
 realtime-analytics/
 ├── cmd/
 │   └── server/main.go
@@ -59,61 +59,39 @@ realtime-analytics/
 ├── go.mod
 └── README.md
 
-Requirements
+# Requirements
 Go 1.20+
 MySQL 8+
 Redis 6+
 Git
 
-Environment Variables
+# Environment Variables
 Create a .env file and copy from .example.env file
 
-Or with Docker:
-docker exec -i mysql mysql -u root -p realtime < migrations/001_init_schema.sql
+# Local Deployment
+git clone https://github.com/nm370130/realtime-analytics.git
+cd realtime-analytics
 
-Redis Keys Used
-Key	                        Description
-active_users	            total active users
-active_users:web	        web active users
-active_users:mobile-app1	mobile app1 users
-active_users:mobile-app2	mobile app2 users
-api_rejected:5min	        rejected API count (expires 5 min)
-sensors:type-breakdown	    cached sensor type distribution
+Make sure Docker & Docker Compose are installed.
 
-Running the Application
-1. Install dependencies
-go mod tidy
+Start all services:
 
-2. Start MySQL & Redis
+docker-compose up --build
 
-Using Docker:
+Build your Go application
 
-docker run --name mysql8 -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d mysql:8
-docker run --name redis -p 6379:6379 -d redis
+Start MySQL with seeded schema + mock data
 
-3. Run the server
-cd cmd/server
-go run main.go
+Start Redis
 
-Server runs at:
-http://localhost:8080
+Expose the Go API at http://localhost:8080
 
-API Endpoints
-Health
-GET /health
 
-Summary Metrics
-GET /api/v1/metrics/summary
+# Stopping the server
+docker-compose down
 
-Metrics History
-GET /api/v1/metrics/history?type=activeUsers&interval=5m
-
-Sensor Type Breakdown
-GET /api/v1/sensors/type-breakdown
-
-Modules Metadata
-GET /api/v1/modules
-
+# To delete MySQL + Redis data too:
+docker-compose down -v
 
 
 
